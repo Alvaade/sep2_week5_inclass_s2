@@ -1,5 +1,9 @@
+FROM maven:3.8.5-openjdk-17 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package
 FROM openjdk:17
-COPY ./src /usr/src/myapp
-WORKDIR /usr/src/myapp
-RUN javac -d out main/java/org/example/App.java
-CMD ["java", "-cp", "out", "org.example.App"]
+WORKDIR /app
+COPY --from=build /app/target/untitled-1.0-SNAPSHOT.jar app.jar
+CMD ["java", "-jar", "app.jar"]
